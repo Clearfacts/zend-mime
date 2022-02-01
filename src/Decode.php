@@ -24,26 +24,28 @@ class Decode
      */
     public static function splitMime($body, $boundary)
     {
-        // TODO: we're ignoring \r for now - is this function fast enough and is it safe to assume noone needs \r?
-        $body = str_replace("\r", '', $body);
-
         $start = 0;
         $res = [];
+        $boundaryEol = "\r\n";
         // find every mime part limiter and cut out the
         // string before it.
         // the part before the first boundary string is discarded:
-        $p = strpos($body, '--' . $boundary . "\n", $start);
+        $p = strpos($body, '--' . $boundary . $boundaryEol, $start);
         if ($p === false) {
-            // no parts found!
-            return [];
+            $boundaryEol = "\n";
+            $p = strpos($body, '--' . $boundary . $boundaryEol, $start);
+            if ($p === false) {
+                // no parts found!
+                return [];
+            }
         }
 
         // position after first boundary line
-        $start = $p + 3 + strlen($boundary);
+        $start = $p + 2 + strlen($boundaryEol) + strlen($boundary);
 
-        while (($p = strpos($body, '--' . $boundary . "\n", $start)) !== false) {
+        while (($p = strpos($body, '--' . $boundary . $boundaryEol, $start)) !== false) {
             $res[] = substr($body, $start, $p - $start);
-            $start = $p + 3 + strlen($boundary);
+            $start = $p + 2 + strlen($boundaryEol) + strlen($boundary);
         }
 
         // no more parts, find end boundary
@@ -109,8 +111,7 @@ class Decode
         $firstline = $firstlinePos === false ? $message : substr($message, 0, $firstlinePos);
         if (! preg_match('%^[^\s]+[^:]*:%', $firstline)) {
             $headers = new Headers();
-            // TODO: we're ignoring \r for now - is this function fast enough and is it safe to assume noone needs \r?
-            $body = str_replace(["\r", "\n"], ['', $EOL], $message);
+            $body = $message;
             return;
         }
 
