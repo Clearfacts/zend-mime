@@ -28,3 +28,8 @@ Browse the documentation online at https://docs.zendframework.com/zend-mime/
 * [Issues](https://github.com/zendframework/zend-mime/issues/)
 * [Chat](https://zendframework-slack.herokuapp.com/)
 * [Forum](https://discourse.zendframework.com/)
+
+## Technical debt links
+
+[Barometer IT](https://wolterskluwer.barometerit.com/b/system/041800002496)
+[SonarQube Project](https://sonarqube.cloud-dev.wolterskluwer.eu//dashboard?id=clearfacts%3Azend-mime)
